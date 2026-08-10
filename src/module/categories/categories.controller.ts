@@ -44,7 +44,28 @@ import { categoriesService } from "./categories.service";
 
  }
 
+ const updateCategory=async(req:Request,res:Response)=>{
+   try {
+      const {id}=req.params
+      const result=await categoriesService.updateCategory(id as string,req.body)
+      res.status(201).json({
+         success:true,
+         message:"Category update successfully",
+         data:result
+      })
+
+   } catch (error:any) {
+      res.status(500).json({
+         success:false,
+         message:"category update failed",
+         error:error.message,
+         details:error
+      })
+   }
+ }
+
  export const categoriesController={
     createCategories,
-    getAllCategory
+    getAllCategory,
+    updateCategory
  }
