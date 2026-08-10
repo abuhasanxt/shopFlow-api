@@ -1,6 +1,7 @@
 
 import express, { Application, Request, Response } from "express"
-import { categoriesRouter } from "./module/categories/categories.route";
+import { IndexRoute } from "./routes";
+
 const app: Application = express();
 
 // Enable URL-encoded form data parsing
@@ -8,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-app.use("/categories",categoriesRouter)
+app.use("/",IndexRoute)
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
