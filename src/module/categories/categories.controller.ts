@@ -64,8 +64,29 @@ import { categoriesService } from "./categories.service";
    }
  }
 
+
+
+ const deleteCategory=async(req:Request,res:Response)=>{
+   try {
+      const {id}=req.params
+      const result=await categoriesService.deleteCategory(id as string)
+      res.status(200).json({
+         success:true,
+         message:"category delete successfully",
+         data:result
+      })
+   } catch (error:any) {
+      res.status(500).json({
+         success:false,
+         message:"Delete failed",
+         error:error.message,
+         details:error
+      })
+   }
+ }
  export const categoriesController={
     createCategories,
     getAllCategory,
-    updateCategory
+    updateCategory,
+    deleteCategory
  }

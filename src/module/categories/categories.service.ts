@@ -32,9 +32,26 @@ const updateCategory=async(id:string,data:updateCategoryData)=>{
     return result
 }
 
+const deleteCategory=async(id:string)=>{
+const existingCategory=await prisma.category.findFirst({
+    where:{id}
+})
+
+if (!existingCategory) {
+    throw new Error("Category not found")
+}
+    const result=await prisma.category.delete({
+        where:{
+            id
+        }
+    })
+    return result
+}
+
 
 export const categoriesService = {
     createCategories,
     getAllCategory,
-    updateCategory
+    updateCategory,
+    deleteCategory
 }
