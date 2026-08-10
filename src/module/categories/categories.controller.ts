@@ -9,7 +9,7 @@ import { categoriesService } from "./categories.service";
          const result =await categoriesService.createCategories(req.body)
 
          res.status(201).json({
-            success:false,
+            success:true,
             message:"Category Create successfully!",
             data:result
          })
@@ -24,6 +24,27 @@ import { categoriesService } from "./categories.service";
  }
 
 
+
+ const getAllCategory=async(req:Request,res:Response)=>{
+  try {
+    const result=await categoriesService.getAllCategory()
+    res.status(200).json({
+      success:true,
+      message:"Categories retrieved successfully!",
+      data:result
+    })
+  } catch (error:any) {
+   res.status(401).json({
+      success:false,
+      message:"Categories retrieved failed",
+      error:error.message,
+      details:error
+   })
+  }
+
+ }
+
  export const categoriesController={
-    createCategories
+    createCategories,
+    getAllCategory
  }
