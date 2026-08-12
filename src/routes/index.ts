@@ -7,7 +7,7 @@ import { userRoutes } from "../module/auth/auth.route"
 const router=express.Router()
 
 router.use("/categories",categoriesRoutes)
-router.use("/auth/register",userRoutes)
+router.use("/auth",userRoutes)
 
 
 export const IndexRoute=router

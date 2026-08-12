@@ -21,6 +21,23 @@ const registerCustomer = async (payload: UserData) => {
   return result;
 };
 
+interface UserLogin {
+  email: string;
+  password: string;
+}
+
+const loginUser = async (payload: UserLogin) => {
+  const { email, password } = payload;
+  const result = await auth.api.signInEmail({
+    body: {
+      email,
+      password,
+    },
+  });
+  return result;
+};
+
 export const userService = {
   registerCustomer,
+  loginUser,
 };
