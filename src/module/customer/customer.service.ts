@@ -30,10 +30,46 @@ const getById =async(id:string)=>{
     return result
 }
 
+interface UserData{
+    name:string,
+    image:string
+}
+const updateMe=async(id:string,payload:UserData)=>{
+const existingUser=await prisma.user.findFirst({
+    where:{id}
+})
+if (!existingUser) {
+    throw new Error("User not found")
+}
+
+
+
+  if (Object.keys(payload).length === 0) {
+    throw new Error("Please provide at least one field to update");
+  }
+
+  const isSame =
+    (payload.name === undefined || payload.name === existingUser.name) &&
+    (payload.image === undefined ||
+      payload.image === existingUser.image);
+
+  if (isSame) {
+    throw new Error("Your provided data is already up to date");
+  }
+
+    const result=await prisma.user.update({
+        where:{
+           id
+        },
+        data: payload
+    })
+    return result
+}
 
 
 export const customerService={
     getAllCustomer,
     getMe,
-    getById
+    getById,
+    updateMe
 }

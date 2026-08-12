@@ -38,8 +38,22 @@ const getById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
+const updateMe = catchAsync(async (req: Request, res: Response) => {
+  const {id} = req.params
+  const result = await customerService.updateMe(id as string,req.body);
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "Update successfully",
+    data: result,
+  });
+});
+
 export const customerController = {
   getAllCustomer,
   getMe,
-  getById
+  getById,
+  updateMe
 };
