@@ -67,9 +67,21 @@ if (!existingUser) {
 }
 
 
+
+const deleteMe=async(id:string)=>{
+    const result=await prisma.user.delete({
+        where:{id:id}
+    })
+    if (!result) {
+        throw new Error("User not found")
+    }
+    return result
+}
+
 export const customerService={
     getAllCustomer,
     getMe,
     getById,
-    updateMe
+    updateMe,
+    deleteMe
 }

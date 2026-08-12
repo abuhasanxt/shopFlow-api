@@ -6,5 +6,6 @@ router.get("/",customerController.getAllCustomer);
 router.get("/me",customerController.getMe);
 router.get("/:id",customerController.getById);
 router.patch("/:id",customerController.updateMe);
+router.delete("/:id",customerController.deleteMe);
 
 export const customerRoutes = router;
