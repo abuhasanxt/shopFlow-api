@@ -10,8 +10,30 @@ const getAllCustomer=async()=>{
     return result
 }
 
+const getMe=async(userId:string)=>{
+    const result=await prisma.user.findUnique({
+        where:{
+            id:userId
+        }
+    })
+    return result
+}
+
+
+const getById =async(id:string)=>{
+    const result=await prisma.user.findUnique({
+        where:{id:id}
+    })
+    if (!result) {
+        throw new Error("Customer not Found")
+    }
+    return result
+}
+
 
 
 export const customerService={
-    getAllCustomer
+    getAllCustomer,
+    getMe,
+    getById
 }
