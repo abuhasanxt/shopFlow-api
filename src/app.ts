@@ -1,6 +1,8 @@
 
 import express, { Application, Request, Response } from "express"
 import { IndexRoute } from "./routes";
+import { notFound } from "./middleware/notFound";
+import errorHandler from "./middleware/globalErrorHandler";
 
 const app: Application = express();
 
@@ -15,5 +17,7 @@ app.use("/",IndexRoute)
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello ShopFlow API');
 });
+app.use(errorHandler)
+app.use(notFound)
 
 export default app
