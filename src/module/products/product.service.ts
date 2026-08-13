@@ -21,9 +21,6 @@ const createProduct = async (
   return result;
 };
 
-
-
-
 const getAllProduct = async (query: ProductQuery) => {
   const {
     categoryId,
@@ -97,6 +94,9 @@ const getAllProduct = async (query: ProductQuery) => {
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
+      include: {
+        category: true,
+      },
       orderBy: {
         [sort]: order,
       },
@@ -109,6 +109,10 @@ const getAllProduct = async (query: ProductQuery) => {
     }),
   ]);
 
+  if (products.length === 0) {
+    throw new Error("Product not found");
+  }
+
   return {
     products,
     pagination: {
@@ -119,7 +123,23 @@ const getAllProduct = async (query: ProductQuery) => {
     },
   };
 };
+
+const getProductById = async (id: string) => {
+  const result = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      category: true,
+    },
+  });
+  if (!result) {
+    throw new Error("Product not found");
+  }
+  return result;
+};
 export const productService = {
   createProduct,
-  getAllProduct
+  getAllProduct,
+  getProductById,
 };
