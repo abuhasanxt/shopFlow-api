@@ -15,10 +15,10 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await productService.getAllProduct();
+  const result = await productService.getAllProduct(req.query);
   sendResponse(res, {
     success: true,
-    httpStatusCode: status.CREATED,
+    httpStatusCode: status.OK,
     message: "product fetching successfully",
     data: result,
   });

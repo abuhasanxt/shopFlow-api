@@ -1,14 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "../../lib/prisma";
-
-interface ProductData {
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  categoryId: string;
-  imageUrl: string;
-  isActive?: boolean;
-}
+import { ProductData, ProductQuery } from "./product.interface";
 
 const createProduct = async (
   payload: Omit<ProductData, "id" | "createdAt" | "updatedAt">,
@@ -30,10 +22,103 @@ const createProduct = async (
 };
 
 
-const getAllProduct=async()=>{
-    const result=await prisma.product.findMany()
-    return result
-}
+
+
+const getAllProduct = async (query: ProductQuery) => {
+  const {
+    categoryId,
+    minPrice,
+    maxPrice,
+    inStock,
+    q,
+    sort = "createdAt",
+    order = "desc",
+    page = "1",
+    limit = "1",
+  } = query;
+
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+
+  const where: any = {};
+
+  // category filter
+  if (categoryId) {
+    where.categoryId = categoryId;
+  }
+
+  // price filter
+  if (minPrice || maxPrice) {
+    where.price = {};
+
+    if (minPrice) {
+      where.price.gte = Number(minPrice);
+    }
+
+    if (maxPrice) {
+      where.price.lte = Number(maxPrice);
+    }
+  }
+
+  // stock filter
+  if (inStock === "true") {
+    where.stock = {
+      gt: 0,
+    };
+  }
+
+  if (inStock === "false") {
+    where.stock = {
+      equals: 0,
+    };
+  }
+
+  // search
+  if (q) {
+    where.OR = [
+      {
+        name: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+      {
+        description: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  // pagination
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      orderBy: {
+        [sort]: order,
+      },
+      skip,
+      take: limitNumber,
+    }),
+
+    prisma.product.count({
+      where,
+    }),
+  ]);
+
+  return {
+    products,
+    pagination: {
+      page: pageNumber,
+      limit: limitNumber,
+      total,
+      totalPages: Math.ceil(total / limitNumber),
+    },
+  };
+};
 export const productService = {
   createProduct,
   getAllProduct
