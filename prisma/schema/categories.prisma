@@ -1,7 +1,9 @@
-model Category{
-  id String @id @default(uuid())
+model Category {
+  id   String @id @default(uuid())
   name String @db.VarChar(100)
-//   authorId String
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  //   authorId String
+
+  products  Product[]
+  cratedAt  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
