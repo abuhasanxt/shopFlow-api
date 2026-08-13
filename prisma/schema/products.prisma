@@ -1,14 +1,14 @@
 model Product {
-    id          String @id @default(uuid())
+    id          String     @id @default(uuid())
     name        String
     description String
     price       Int
     stock       Int
     categoryId  String
-    imageUrl String
-    isActive Boolean @default(true)
-
-    category Category @relation(fields: [categoryId], references: [id])
+    imageUrl    String
+    isActive    Boolean    @default(true)
+    cartItems   CartItem[]
+    category    Category   @relation(fields: [categoryId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
