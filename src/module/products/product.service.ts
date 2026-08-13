@@ -29,6 +29,12 @@ const createProduct = async (
   return result;
 };
 
+
+const getAllProduct=async()=>{
+    const result=await prisma.product.findMany()
+    return result
+}
 export const productService = {
   createProduct,
+  getAllProduct
 };
