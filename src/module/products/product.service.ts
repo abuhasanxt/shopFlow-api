@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "../../lib/prisma";
-import { ProductData, ProductQuery } from "./product.interface";
+import { ProductData, ProductQuery, ProductUpdate } from "./product.interface";
 
 const createProduct = async (
   payload: Omit<ProductData, "id" | "createdAt" | "updatedAt">,
@@ -138,8 +138,47 @@ const getProductById = async (id: string) => {
   }
   return result;
 };
+
+const updateProduct = async (id: string, payload: ProductUpdate) => {
+  const existingProduct = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!existingProduct) {
+    throw new Error("Product not found");
+  }
+
+  if (Object.keys(payload).length === 0) {
+    throw new Error("Please provide at least one field to update");
+  }
+
+  const isSame =
+    (payload.name === undefined || payload.name === existingProduct.name) &&
+    (payload.description === undefined ||
+      payload.description === existingProduct.description) &&
+    (payload.price === undefined || payload.price === existingProduct.price) &&
+    (payload.stock === undefined || payload.stock === existingProduct.stock) &&
+    (payload.imageUrl === undefined ||
+      payload.imageUrl === existingProduct.imageUrl) &&
+    (payload.isActive === undefined ||
+      payload.isActive === existingProduct.isActive);
+
+  if (isSame) {
+    throw new Error("Your provided data is already up to date");
+  }
+
+  const result = await prisma.product.update({
+    where: {
+      id,
+    },
+    data: payload,
+  });
+  return result;
+};
 export const productService = {
   createProduct,
   getAllProduct,
   getProductById,
+  updateProduct,
 };
