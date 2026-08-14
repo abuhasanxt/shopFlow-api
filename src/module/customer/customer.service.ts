@@ -1,4 +1,6 @@
+import status from "http-status"
 import { Role } from "../../../generated/prisma/enums"
+import AppError from "../../errorHelpers/AppError"
 import { prisma } from "../../lib/prisma"
 
 const getAllCustomer=async()=>{
@@ -25,7 +27,7 @@ const getById =async(id:string)=>{
         where:{id:id}
     })
     if (!result) {
-        throw new Error("Customer not Found")
+        throw new AppError(status.NOT_FOUND,"Customer not Found")
     }
     return result
 }
@@ -39,13 +41,13 @@ const existingUser=await prisma.user.findFirst({
     where:{id}
 })
 if (!existingUser) {
-    throw new Error("User not found")
+    throw new AppError(status.NOT_FOUND,"User not found")
 }
 
 
 
   if (Object.keys(payload).length === 0) {
-    throw new Error("Please provide at least one field to update");
+    throw new AppError(status.BAD_REQUEST,"Please provide at least one field to update");
   }
 
   const isSame =
@@ -54,7 +56,7 @@ if (!existingUser) {
       payload.image === existingUser.image);
 
   if (isSame) {
-    throw new Error("Your provided data is already up to date");
+    throw new AppError(status.CONFLICT,"Your provided data is already up to date");
   }
 
     const result=await prisma.user.update({
@@ -73,7 +75,7 @@ const deleteMe=async(id:string)=>{
         where:{id:id}
     })
     if (!result) {
-        throw new Error("User not found")
+        throw new AppError(status.NOT_FOUND,"User not found")
     }
     return result
 }

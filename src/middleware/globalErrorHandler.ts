@@ -5,11 +5,9 @@ import { Prisma } from "../../generated/prisma/client";
 import { envVars } from "../config/env";
 import status from "http-status";
 import z from "zod";
-
-interface TErrorSource {
-  path: string;
-  message: string;
-}
+import { TErrorResponse, TErrorSources } from "../interface/error.interface";
+import { handleZodError } from "../errorHelpers/handleZodError";
+import AppError from "../errorHelpers/AppError";
 
 function errorHandler(
   err: any,
@@ -20,21 +18,19 @@ function errorHandler(
   if (envVars.NODE_ENV === "development") {
     console.log("Error from Global Error Handler: ", err);
   }
-  const errorSources: TErrorSource[] = [];
+  let errorSources: TErrorSources[] = [];
   let statusCode: number = status.INTERNAL_SERVER_ERROR;
   let errorMessage: string = "internal server error";
-  const errorDetails: any = err;
+  // const errorDetails: any = err;
+  let stack: string | undefined = undefined;
 
   //zod validation error
   if (err instanceof z.ZodError) {
-    statusCode = status.BAD_REQUEST;
-    errorMessage = "Zod validation Error";
-    err.issues.forEach((issue) => {
-      errorSources.push({
-        path: issue.path.join(" => ") || "Unknown",
-        message: issue.message,
-      });
-    });
+    const simplifiedError = handleZodError(err);
+    statusCode = simplifiedError.statusCode as number;
+    errorMessage = simplifiedError.errorMessage;
+    errorSources = [...simplifiedError.errorSources];
+    stack=err.stack
   }
   //prismaClientValidationError
   else if (err instanceof Prisma.PrismaClientValidationError) {
@@ -75,14 +71,39 @@ function errorHandler(
       statusCode = status.SERVICE_UNAVAILABLE;
       errorMessage = "Can't reach database server !";
     }
+  }else if (err instanceof AppError) {
+    statusCode=err.statusCode;
+    errorMessage=err.message;
+    stack=err.stack;
+    errorSources=[
+      {
+        path:``,
+        message:err.message
+      }
+    ]
   }
 
-  res.status(statusCode).json({
+   else if (err instanceof Error) {
+    statusCode = status.INTERNAL_SERVER_ERROR;
+    errorMessage = err.message;
+    stack = err.stack;
+    errorSources=[
+      {
+        path:``,
+        message:err.message
+      }
+    ]
+  }
+
+  const errorResponse: TErrorResponse = {
     success: false,
-    message: errorMessage,
+    errorMessage: errorMessage,
     errorSources,
-    ...(process.env.NODE_ENV !== "production" && { error: errorDetails }),
-  });
+    error: envVars.NODE_ENV !== "production" ? err : undefined,
+    stack: envVars.NODE_ENV !== "production" ? err : undefined,
+  };
+
+  res.status(statusCode).json(errorResponse);
 }
 
 export default errorHandler;

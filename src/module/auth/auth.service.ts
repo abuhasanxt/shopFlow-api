@@ -1,3 +1,5 @@
+import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 
 interface UserData {
@@ -16,7 +18,7 @@ const registerCustomer = async (payload: UserData) => {
     },
   });
   if (!result.user) {
-    throw new Error("Failed to register customer");
+    throw new AppError(status.BAD_REQUEST,"Failed to register customer");
   }
   return result;
 };

@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { ProductData, ProductQuery, ProductUpdate } from "./product.interface";
 
@@ -12,7 +14,7 @@ const createProduct = async (
   });
 
   if (!existingCategory) {
-    throw new Error("Category not found");
+    throw new AppError(status.NOT_FOUND, "Category not found");
   }
 
   const result = await prisma.product.create({
@@ -110,7 +112,7 @@ const getAllProduct = async (query: ProductQuery) => {
   ]);
 
   if (products.length === 0) {
-    throw new Error("Product not found");
+    throw new AppError(status.NOT_FOUND, "Product not found");
   }
 
   return {
@@ -134,7 +136,7 @@ const getProductById = async (id: string) => {
     },
   });
   if (!result) {
-    throw new Error("Product not found");
+    throw new AppError(status.NOT_FOUND, "Product not found");
   }
   return result;
 };
@@ -146,11 +148,14 @@ const updateProduct = async (id: string, payload: ProductUpdate) => {
     },
   });
   if (!existingProduct) {
-    throw new Error("Product not found");
+    throw new AppError(status.NOT_FOUND, "Product not found");
   }
 
   if (Object.keys(payload).length === 0) {
-    throw new Error("Please provide at least one field to update");
+    throw new AppError(
+      status.BAD_REQUEST,
+      "Please provide at least one field to update",
+    );
   }
 
   const isSame =
@@ -165,7 +170,10 @@ const updateProduct = async (id: string, payload: ProductUpdate) => {
       payload.isActive === existingProduct.isActive);
 
   if (isSame) {
-    throw new Error("Your provided data is already up to date");
+    throw new AppError(
+      status.CONFLICT,
+      "Your provided data is already up to date",
+    );
   }
 
   const result = await prisma.product.update({
@@ -177,27 +185,25 @@ const updateProduct = async (id: string, payload: ProductUpdate) => {
   return result;
 };
 
+const deleteProduct = async (id: string) => {
+  const existingProduct = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!existingProduct) {
+    throw new AppError(status.NOT_FOUND, "Product not found");
+  }
 
-
-const deleteProduct=async(id:string)=>{
-    const existingProduct=await prisma.product.findUnique({
-        where:{
-            id
-        }
-    })
-    if (!existingProduct) {
-        throw new Error("Product not found")
-    }
-
-    const result=await prisma.product.delete({
-        where:{id}
-    })
-    return result
-}
+  const result = await prisma.product.delete({
+    where: { id },
+  });
+  return result;
+};
 export const productService = {
   createProduct,
   getAllProduct,
   getProductById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };

@@ -1,4 +1,6 @@
+import status from "http-status"
 import { Category } from "../../../generated/prisma/client"
+import AppError from "../../errorHelpers/AppError"
 import { prisma } from "../../lib/prisma"
 
 
@@ -22,7 +24,7 @@ const getAllCategory=async()=>{
 const updateCategory=async(id:string,data:updateCategoryData)=>{
     const existingCategory=await prisma.category.findFirst({where:{id}})
     if (!existingCategory) {
-        throw new Error("Category not found")
+        throw new AppError(status.NOT_FOUND,"Category not found")
     }
     const result=await prisma.category.update({
         where:{
@@ -38,7 +40,7 @@ const existingCategory=await prisma.category.findFirst({
 })
 
 if (!existingCategory) {
-    throw new Error("Category not found")
+    throw new AppError(status.NOT_FOUND,"Category not found")
 }
     const result=await prisma.category.delete({
         where:{
