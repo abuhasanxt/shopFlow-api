@@ -1,6 +1,7 @@
 import status from "http-status";
 import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
+import { tokenUtils } from "../../utils/token";
 
 interface UserData {
   name: string;
@@ -36,7 +37,29 @@ const loginUser = async (payload: UserLogin) => {
       password,
     },
   });
-  return result;
+
+  const accessToken=tokenUtils.getAccessToken({
+    userId:result.user.id,
+    role:result.user.role,
+    name:result.user.name,
+    email:result.user.email,
+    emailVerified:result.user.emailVerified
+
+
+  })
+
+  const refreshToken=tokenUtils.getRefreshToken({
+      userId:result.user.id,
+    role:result.user.role,
+    name:result.user.name,
+    email:result.user.email,
+    emailVerified:result.user.emailVerified
+  })
+  return {
+    ...result,
+    accessToken,
+    refreshToken
+  };
 };
 
 export const userService = {
