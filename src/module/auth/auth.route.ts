@@ -1,10 +1,11 @@
 import express from "express"
-import { userController } from "./auth.controller"
+import { authController } from "./auth.controller"
+
 
 const router=express.Router()
 
-router.post("/register",userController.registerCustomer)
-router.post("/login",userController.loginUser)
+router.post("/register",authController.registerCustomer)
+router.post("/login",authController.loginUser)
 
 
-export const userRoutes=router
+export const authRoutes=router

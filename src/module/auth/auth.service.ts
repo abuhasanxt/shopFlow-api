@@ -21,7 +21,29 @@ const registerCustomer = async (payload: UserData) => {
   if (!result.user) {
     throw new AppError(status.BAD_REQUEST,"Failed to register customer");
   }
-  return result;
+
+    const accessToken=tokenUtils.getAccessToken({
+    userId:result.user.id,
+    role:result.user.role,
+    name:result.user.name,
+    email:result.user.email,
+    emailVerified:result.user.emailVerified
+
+
+  })
+
+  const refreshToken=tokenUtils.getRefreshToken({
+      userId:result.user.id,
+    role:result.user.role,
+    name:result.user.name,
+    email:result.user.email,
+    emailVerified:result.user.emailVerified
+  })
+  return {
+    ...result,
+    accessToken,
+    refreshToken
+  };
 };
 
 interface UserLogin {
@@ -62,7 +84,7 @@ const loginUser = async (payload: UserLogin) => {
   };
 };
 
-export const userService = {
+export const authService = {
   registerCustomer,
   loginUser,
 };
