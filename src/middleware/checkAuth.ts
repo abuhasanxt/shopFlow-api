@@ -12,7 +12,7 @@ export const checkAuth =
   (...authRoles: Role[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-        //session token verification
+      //session token verification
       const sessionToken = cookiesUtils.getCookie(
         req,
         "better-auth.session_token",
@@ -60,13 +60,11 @@ export const checkAuth =
               "Forbidden access! You do not have permission to access this resource",
             );
           }
-// req.user={
-//   userId:user.id,
-//   role:user.role,
-//   email:user.email,
-
-// }
-
+          req.user = {
+            userId: user.id,
+            role: user.role,
+            email: user.email,
+          };
         }
 
         const accessToken = cookiesUtils.getCookie(req, "accessToken");
@@ -77,9 +75,8 @@ export const checkAuth =
             "Unauthorized access ! No access token provided.",
           );
         }
-
       }
-//access token verification
+      //access token verification
       const accessToken = cookiesUtils.getCookie(req, "accessToken");
 
       if (!accessToken) {
@@ -101,13 +98,15 @@ export const checkAuth =
         );
       }
 
-     if (authRoles.length > 0 && !authRoles.includes(verifiedToken.data!.role as Role)) {
-            throw new AppError(
-              status.FORBIDDEN,
-              "Forbidden access! You do not have permission to access this resource",
-            );
-          }
-
+      if (
+        authRoles.length > 0 &&
+        !authRoles.includes(verifiedToken.data!.role as Role)
+      ) {
+        throw new AppError(
+          status.FORBIDDEN,
+          "Forbidden access! You do not have permission to access this resource",
+        );
+      }
 
       next();
     } catch (error: any) {

@@ -4,31 +4,12 @@ import { prisma } from "../../lib/prisma"
 
 const addToCart = async (
   userId: string,
-  productId: string,
-  quantity: number
+  items: {
+    productId: string;
+    quantity: number;
+  }[]
 ) => {
-  //  Product check
-  const product = await prisma.product.findUnique({
-    where: {
-      id: productId,
-    },
-  });
-
-  if (!product) {
-    throw new AppError(status.NOT_FOUND, "Product not found");
-  }
-
-  //  Product active 
-  if (!product.isActive) {
-    throw new AppError(status.BAD_REQUEST, "Product is not active");
-  }
-
-  //  Stock check
-  if (product.stock < quantity) {
-    throw new AppError(status.BAD_REQUEST, "Insufficient stock");
-  }
-
-  //  User- cart  create 
+  // Cart create/find
   const cart = await prisma.cart.upsert({
     where: {
       userId,
@@ -39,47 +20,88 @@ const addToCart = async (
     },
   });
 
-  //  Cart- product  check
-  const existingItem = await prisma.cartItem.findUnique({
-    where: {
-      cartId_productId: {
-        cartId: cart.id,
-        productId,
+  const results = [];
+
+  for (const item of items) {
+    const { productId, quantity } = item;
+
+    // Product check
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
       },
-    },
-  });
+    });
 
-  //  quantity update
-  if (existingItem) {
-    const newQuantity = existingItem.quantity + quantity;
-
-    if (newQuantity > product.stock) {
+    if (!product) {
       throw new AppError(
-        status.BAD_REQUEST,
-        "Requested quantity exceeds available stock"
+        status.NOT_FOUND,
+        `Product ${productId} not found`
       );
     }
 
-    return await prisma.cartItem.update({
+    // Product active check
+    if (!product.isActive) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        `${product.name} is not active`
+      );
+    }
+
+    // Stock check
+    if (product.stock < quantity) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        `Insufficient stock for ${product.name}`
+      );
+    }
+
+    // Existing cart item check
+    const existingItem = await prisma.cartItem.findUnique({
       where: {
-        id: existingItem.id,
-      },
-      data: {
-        quantity: newQuantity,
+        cartId_productId: {
+          cartId: cart.id,
+          productId,
+        },
       },
     });
+
+    // If product already exists in cart
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+
+      if (newQuantity > product.stock) {
+        throw new AppError(
+          status.BAD_REQUEST,
+          `Requested quantity exceeds available stock for ${product.name}`
+        );
+      }
+
+      const updatedItem = await prisma.cartItem.update({
+        where: {
+          id: existingItem.id,
+        },
+        data: {
+          quantity: newQuantity,
+        },
+      });
+
+      results.push(updatedItem);
+    } else {
+      // New cart item
+      const newItem = await prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          productId,
+          quantity,
+        },
+      });
+
+      results.push(newItem);
+    }
   }
 
-  // item create
-  return await prisma.cartItem.create({
-    data: {
-      cartId: cart.id,
-      productId,
-      quantity,
-    },
-  });
+  return results;
 };
-
 
 export const cardService={
     addToCart

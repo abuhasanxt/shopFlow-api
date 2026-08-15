@@ -6,35 +6,22 @@ import status from "http-status";
 import { sendResponse } from "../../shared/sentResponse";
 import { cardService } from "./cart.service";
 
-
-
 const addToCart = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
-
+  const userId = req.user.userId;
   if (!userId) {
-    throw new AppError(
-      status.UNAUTHORIZED,
-      "You are Unauthorized"
-    );
+    throw new AppError(status.UNAUTHORIZED, "You are Unauthorized");
   }
+  const { items } = req.body;
 
-  const { productId, quantity } = req.body;
-
-  const result = await cardService.addToCart(
-    userId as string,
-    productId,
-    quantity
-  );
+  const result = await cardService.addToCart(userId, items);
 
   sendResponse(res, {
     success: true,
-    httpStatusCode: status.CREATED,
-    message: "Product added to cart successfully!",
+    httpStatusCode: status.OK,
+    message: "Products added to cart successfully",
     data: result,
   });
 });
-
-
-export const cartController={
-    addToCart
-}
+export const cartController = {
+  addToCart,
+};
