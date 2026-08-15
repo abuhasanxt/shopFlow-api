@@ -22,4 +22,10 @@ router.patch(
   cartController.updateCartItem,
 );
 
+router.delete(
+  "/items/:productId",
+  checkAuth(Role.CUSTOMER),
+  cartController.deleteCartItem,
+);
+
 export const cartRoutes = router;
