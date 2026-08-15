@@ -12,4 +12,6 @@ const router=express.Router()
 
 router.post("/items",checkAuth(Role.CUSTOMER),validateRequest(createCartZodSchema),cartController.addToCart)
 
+router.get("/",checkAuth(Role.CUSTOMER),cartController.getCart)
+
 export const cartRoutes=router

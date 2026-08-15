@@ -1,13 +1,13 @@
-import status from "http-status"
-import AppError from "../../errorHelpers/AppError"
-import { prisma } from "../../lib/prisma"
+import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
+import { prisma } from "../../lib/prisma";
 
 const addToCart = async (
   userId: string,
   items: {
     productId: string;
     quantity: number;
-  }[]
+  }[],
 ) => {
   // Cart create/find
   const cart = await prisma.cart.upsert({
@@ -33,25 +33,19 @@ const addToCart = async (
     });
 
     if (!product) {
-      throw new AppError(
-        status.NOT_FOUND,
-        `Product ${productId} not found`
-      );
+      throw new AppError(status.NOT_FOUND, `Product ${productId} not found`);
     }
 
     // Product active check
     if (!product.isActive) {
-      throw new AppError(
-        status.BAD_REQUEST,
-        `${product.name} is not active`
-      );
+      throw new AppError(status.BAD_REQUEST, `${product.name} is not active`);
     }
 
     // Stock check
     if (product.stock < quantity) {
       throw new AppError(
         status.BAD_REQUEST,
-        `Insufficient stock for ${product.name}`
+        `Insufficient stock for ${product.name}`,
       );
     }
 
@@ -72,7 +66,7 @@ const addToCart = async (
       if (newQuantity > product.stock) {
         throw new AppError(
           status.BAD_REQUEST,
-          `Requested quantity exceeds available stock for ${product.name}`
+          `Requested quantity exceeds available stock for ${product.name}`,
         );
       }
 
@@ -103,6 +97,27 @@ const addToCart = async (
   return results;
 };
 
-export const cardService={
-    addToCart
-}
+const getCart = async (userId: string) => {
+  const cart = await prisma.cart.findUnique({
+    where: {
+      userId: userId,
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+  if (!cart) {
+    throw new AppError(status.NOT_FOUND, `Cart for user ${userId} not found`);
+  }
+
+  return cart;
+};
+
+export const cartService = {
+  addToCart,
+  getCart,
+};
