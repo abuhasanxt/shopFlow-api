@@ -6,9 +6,9 @@ import { Role } from "../../../generated/prisma/enums"
 
 const router=express.Router()
 
-router.post("/",checkAuth(Role.CUSTOMER), categoriesController.createCategories)
+router.post("/",checkAuth(Role.ADMIN), categoriesController.createCategories)
 router.get("/",categoriesController.getAllCategory)
-router.patch("/:id",categoriesController.updateCategory)
-router.delete("/:id",categoriesController.deleteCategory)
+router.patch("/:id",checkAuth(Role.ADMIN), categoriesController.updateCategory)
+router.delete("/:id",checkAuth(Role.ADMIN), categoriesController.deleteCategory)
 
 export const categoriesRoutes=router
