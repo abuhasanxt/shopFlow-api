@@ -109,19 +109,19 @@ const getNewToken = async (refreshToken: string, sessionToken: string) => {
   const data = verifiedRefreshToken.data as JwtPayload;
 
   const newAccessToken = tokenUtils.getAccessToken({
-    userId: data.user.id,
-    role: data.user.role,
-    name: data.user.name,
-    email: data.user.email,
-    emailVerified: data.user.emailVerified,
+    userId: data.userId,
+    role: data.role,
+    name: data.name,
+    email: data.email,
+    emailVerified: data.emailVerified,
   });
 
   const newRefreshToken = tokenUtils.getRefreshToken({
-    userId: data.user.id,
-    role: data.user.role,
-    name: data.user.name,
-    email: data.user.email,
-    emailVerified: data.user.emailVerified,
+    userId: data.id,
+    role: data.role,
+    name: data.name,
+    email: data.email,
+    emailVerified: data.emailVerified,
   });
 
   const { token } = await prisma.session.update({
