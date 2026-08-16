@@ -111,7 +111,7 @@ const getCart = async (userId: string) => {
     },
   });
   if (!cart) {
-    throw new AppError(status.NOT_FOUND, `Cart for user ${userId} not found`);
+    throw new AppError(status.NOT_FOUND, `Cart for user  not found`);
   }
 
   return cart;

@@ -6,28 +6,42 @@ import { sendResponse } from "../../shared/sentResponse";
 import { Request, Response } from "express";
 import { orderService } from "./order.service";
 
-const createOrder = catchAsync(
-  async (req: Request, res: Response) => {
-    const userId = req.user?.userId;
+const createOrder = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
 
-    if (!userId) {
-      throw new AppError(
-        status.UNAUTHORIZED,
-        "You are Unauthorized"
-      );
-    }
-
-    const result = await orderService.createOrder(userId);
-
-    sendResponse(res, {
-      success: true,
-      httpStatusCode: status.CREATED,
-      message: "Order created successfully",
-      data: result,
-    });
+  if (!userId) {
+    throw new AppError(status.UNAUTHORIZED, "You are Unauthorized");
   }
-);
 
-export const orderController={
-    createOrder
-}
+  const result = await orderService.createOrder(userId);
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.CREATED,
+    message: "Order created successfully",
+    data: result,
+  });
+});
+
+const getAllOrder = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+
+  if (!userId) {
+    throw new AppError(status.UNAUTHORIZED, "You are Unauthorized");
+  }
+
+  const result = await orderService.getAllOrder(userId, role);
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "Order fetching successfully",
+    data: result,
+  });
+});
+
+export const orderController = {
+  createOrder,
+  getAllOrder,
+};
