@@ -9,13 +9,13 @@ const getAllCustomer = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,
-    message: "Customer fetching successfully",
+    message: "Customers fetching successfully",
     data: result,
   });
 });
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user?.userId;
   const result = await customerService.getMe(userId as string);
   sendResponse(res, {
     success: true,
@@ -41,8 +41,9 @@ const getById = catchAsync(async (req: Request, res: Response) => {
 
 
 const updateMe = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params
-  const result = await customerService.updateMe(id as string,req.body);
+  const userId= req.user?.userId
+
+  const result = await customerService.updateMe(userId as string,req.body);
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,
@@ -55,8 +56,8 @@ const updateMe = catchAsync(async (req: Request, res: Response) => {
 
 
 const deleteMe = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params
-  const result = await customerService.deleteMe(id as string);
+  const userId = req.user?.userId
+  const result = await customerService.deleteMe(userId as string);
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,

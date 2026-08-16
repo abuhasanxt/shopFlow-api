@@ -36,9 +36,9 @@ interface UserData{
     name:string,
     image:string
 }
-const updateMe=async(id:string,payload:UserData)=>{
+const updateMe=async(userId:string,payload:UserData)=>{
 const existingUser=await prisma.user.findFirst({
-    where:{id}
+    where:{id:userId}
 })
 if (!existingUser) {
     throw new AppError(status.NOT_FOUND,"User not found")
@@ -61,7 +61,7 @@ if (!existingUser) {
 
     const result=await prisma.user.update({
         where:{
-           id
+           id:userId
         },
         data: payload
     })
@@ -70,9 +70,9 @@ if (!existingUser) {
 
 
 
-const deleteMe=async(id:string)=>{
+const deleteMe=async(userId:string)=>{
     const result=await prisma.user.delete({
-        where:{id:id}
+        where:{id:userId}
     })
     if (!result) {
         throw new AppError(status.NOT_FOUND,"User not found")

@@ -1,11 +1,13 @@
 import express from "express";
 import { customerController } from "./customer.controller";
+import { checkAuth } from "../../middleware/checkAuth";
+import { Role } from "../../../generated/prisma/enums";
 
 const router = express.Router();
-router.get("/",customerController.getAllCustomer);
-router.get("/me",customerController.getMe);
-router.get("/:id",customerController.getById);
-router.patch("/:id",customerController.updateMe);
-router.delete("/:id",customerController.deleteMe);
+router.get("/", checkAuth(Role.ADMIN), customerController.getAllCustomer);
+router.get("/me",checkAuth(), customerController.getMe);
+router.get("/:id",checkAuth(Role.ADMIN), customerController.getById);
+router.patch("/me",checkAuth(), customerController.updateMe);
+router.delete("/me",checkAuth(), customerController.deleteMe);
 
 export const customerRoutes = router;
