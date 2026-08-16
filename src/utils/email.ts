@@ -6,6 +6,7 @@ import AppError from "../errorHelpers/AppError";
 import status from "http-status";
 import path from "path";
 import ejs from "ejs";
+import fs from "fs/promises";
 
 const transporter = nodemailer.createTransport({
   host: envVars.EMAIL_SENDER.SMTP_HOST,
@@ -41,7 +42,9 @@ export const sendEmail = async ({
       process.cwd(),
       `src/templates/${templateName}.ejs`,
     );
-    const html = await ejs.render(templatePath, templateData);
+
+    const template = await fs.readFile(templatePath, "utf-8");
+    const html = ejs.render(template, templateData);
 
     const info = await transporter.sendMail({
       from: envVars.EMAIL_SENDER.SMTP_FROM,

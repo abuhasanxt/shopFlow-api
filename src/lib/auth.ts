@@ -45,11 +45,11 @@ export const auth = betterAuth({
             }
           })
 
-          if (user&& user.emailVerified) {
+          if (user&& !user.emailVerified) {
             sendEmail({
               to:email,
               subject:"Verify your email",
-              templateName:"opt",
+              templateName:"otp",
               templateData:{
                 user:user.name,
                 otp

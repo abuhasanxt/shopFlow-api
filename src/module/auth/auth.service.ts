@@ -15,6 +15,17 @@ interface UserData {
 
 const registerCustomer = async (payload: UserData) => {
   const { name, email, password } = payload;
+  const existingUser=await prisma.user.findUnique({
+    where:{
+      email
+    }
+  })
+  if (existingUser) {
+   throw new AppError(
+  status.CONFLICT,
+  "An account with this email already exists. Please log in."
+);
+  }
   const result = await auth.api.signUpEmail({
     body: {
       name,
