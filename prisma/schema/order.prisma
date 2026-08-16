@@ -1,0 +1,30 @@
+model Order {
+    id              String      @id @default(uuid())
+    userId          String
+    totalAmount     Int
+    status          OrderStatus @default(PENDING)
+    paymentIntentId String?
+
+    user  User        @relation(fields: [userId], references: [id])
+    items OrderItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model OrderItem {
+    id        String @id @default(uuid())
+    orderId   String
+    productId String
+
+    name     String
+    price    Int
+    quantity Int
+
+    order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id])
+}
+
+

@@ -8,6 +8,7 @@ model Product {
     imageUrl    String
     isActive    Boolean    @default(true)
     cartItems   CartItem[]
+    orderItems OrderItem[]
     category    Category   @relation(fields: [categoryId], references: [id])
 
     createdAt DateTime @default(now())

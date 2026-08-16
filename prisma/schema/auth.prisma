@@ -11,6 +11,7 @@ model User {
     updatedAt     DateTime  @updatedAt
     sessions      Session[]
     accounts      Account[]
+    orders Order[]
      cart          Cart?
 
     @@unique([email])

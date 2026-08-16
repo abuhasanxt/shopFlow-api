@@ -2,3 +2,10 @@ enum Role {
     ADMIN
     CUSTOMER
 }
+
+enum OrderStatus {
+    PENDING
+    PAID
+    FAILED
+    CANCELLED
+}
