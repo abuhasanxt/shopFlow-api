@@ -169,15 +169,12 @@ const getOrderById = async (
   id: string
 ) => {
   const result = await prisma.order.findFirst({
-    where:
-      role === Role.ADMIN
-        ? {
-            id,
-          }
-        : {
-            id,
-            userId,
-          },
+    where: {
+      id,
+      ...(role !== Role.ADMIN && {
+        userId,
+      }),
+    },
 
     include: {
       items: true,
