@@ -158,7 +158,44 @@ const getAllOrder = async (
 
   return result;
 };
+
+
+
+
+
+const getOrderById = async (
+  userId: string,
+  role: Role,
+  id: string
+) => {
+  const result = await prisma.order.findFirst({
+    where:
+      role === Role.ADMIN
+        ? {
+            id,
+          }
+        : {
+            id,
+            userId,
+          },
+
+    include: {
+      items: true,
+      user: true,
+    },
+  });
+
+  if (!result) {
+    throw new AppError(
+      status.NOT_FOUND,
+      "Order not found"
+    );
+  }
+
+  return result;
+};
 export const orderService={
     createOrder,
-    getAllOrder
+    getAllOrder,
+    getOrderById
 }

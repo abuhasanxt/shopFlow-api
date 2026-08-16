@@ -8,4 +8,5 @@ const router = express.Router();
 router.post("/checkout",checkAuth(Role.CUSTOMER), orderController.createOrder);
 router.get("/",checkAuth(Role.CUSTOMER,Role.ADMIN), orderController.getAllOrder);
 
+router.get("/:id",checkAuth(Role.CUSTOMER,Role.ADMIN), orderController.getAllOrder);
 export const orderRoutes = router;
