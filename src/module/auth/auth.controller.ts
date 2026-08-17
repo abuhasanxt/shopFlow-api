@@ -130,10 +130,51 @@ const emailVerify = catchAsync(async (req: Request, res: Response) => {
     
   });
 });
+
+
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+ 
+
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "Google login successfully",
+    
+  });
+});
+
+
+const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
+
+
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "Email verified successfully",
+    
+  });
+});
+
+const handleOAuthError = catchAsync(async (req: Request, res: Response) => {
+  
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "Email verified successfully",
+    
+  });
+});
+
 export const authController = {
   registerCustomer,
   loginUser,
   getNewToken,
   logoutUser,
-  emailVerify
+  emailVerify,
+  googleLogin,
+  googleLoginSuccess,
+  handleOAuthError
 };
