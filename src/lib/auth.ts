@@ -89,7 +89,10 @@ google:{
       maxAge: 60 * 60 * 24 * 7, //1day in second
     },
   },
-  // trustedOrigins:[process.env.BETTER_AUTH_URL || "http://localhost:5000"],
+  redirectURLs:{
+        signIn : `${envVars.BETTER_AUTH_URL}/auth/google/success`,
+    },
+  trustedOrigins:[envVars.BETTER_AUTH_URL || "http://localhost:5000",envVars.FRONTEND_URL],
   advanced:{
       useSecureCookies:false,
       cookies:{
