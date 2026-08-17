@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import status from "http-status";
 import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
@@ -15,16 +16,16 @@ interface UserData {
 
 const registerCustomer = async (payload: UserData) => {
   const { name, email, password } = payload;
-  const existingUser=await prisma.user.findUnique({
-    where:{
-      email
-    }
-  })
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
   if (existingUser) {
-   throw new AppError(
-  status.CONFLICT,
-  "An account with this email already exists. Please log in."
-);
+    throw new AppError(
+      status.CONFLICT,
+      "An account with this email already exists. Please log in.",
+    );
   }
   const result = await auth.api.signUpEmail({
     body: {
@@ -162,32 +163,64 @@ const logoutUser = async (sessionToken: string) => {
   return result;
 };
 
-
-const verifyEmail=async(email:string,otp:string)=>{
-const result=await auth.api.verifyEmailOTP({
-  body:{
-    email,
-    otp
-  }
-})
-if (!result.user.emailVerified) {
-  await prisma.user.update({
-    where:{
-      email
+const verifyEmail = async (email: string, otp: string) => {
+  const result = await auth.api.verifyEmailOTP({
+    body: {
+      email,
+      otp,
     },
-    data:{
-      emailVerified:true
-    }
-  })
-}
+  });
+  if (!result.user.emailVerified) {
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        emailVerified: true,
+      },
+    });
+  }
+};
 
-}
+const googleLoginSuccess = async (session: Record<string, any>) => {
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+  });
 
+  if (!userExists) {
+    await prisma.user.create({
+      data: {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+      },
+    });
+  }
+  const accessToken = tokenUtils.getAccessToken({
+    id: session.user.id,
+    name: session.user.name,
+    email: session.user.email,
+  });
+
+  const refreshToken = tokenUtils.getRefreshToken({
+    id: session.user.id,
+    name: session.user.name,
+    email: session.user.email,
+  });
+
+  return {
+    accessToken,
+    refreshToken
+  }
+};
 
 export const authService = {
   registerCustomer,
   loginUser,
   getNewToken,
   logoutUser,
-  verifyEmail
+  verifyEmail,
+  googleLoginSuccess,
 };

@@ -7,6 +7,8 @@ import { tokenUtils } from "../../utils/token";
 import { authService } from "./auth.service";
 import AppError from "../../errorHelpers/AppError";
 import { cookiesUtils } from "../../utils/cookie";
+import { envVars } from "../../config/env";
+import { auth } from "../../lib/auth";
 
 const registerCustomer = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.registerCustomer(req.body);
@@ -112,60 +114,73 @@ const logoutUser = catchAsync(async (req: Request, res: Response) => {
     success: true,
     httpStatusCode: status.OK,
     message: "User logged out successfully",
-    data: result
+    data: result,
   });
 });
-
-
 
 const emailVerify = catchAsync(async (req: Request, res: Response) => {
-  const {email,otp}=req.body
-  await authService.verifyEmail(email,otp)
-
+  const { email, otp } = req.body;
+  await authService.verifyEmail(email, otp);
 
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,
     message: "Email verified successfully",
-    
   });
 });
-
 
 const googleLogin = catchAsync(async (req: Request, res: Response) => {
- 
+  const redirectPath = req.query.redirect || "/dashboard";
+  const encodedRedirectPath = encodeURIComponent(redirectPath as string);
 
+  const callbackUrl = `${envVars.BETTER_AUTH_URL}/api/auth/google/success?redirect=${encodedRedirectPath}`;
 
-  sendResponse(res, {
-    success: true,
-    httpStatusCode: status.OK,
-    message: "Google login successfully",
-    
+  res.render("googleRedirect", {
+    callbackUrl,
+    betterAuthUrl: envVars.BETTER_AUTH_URL,
   });
 });
 
-
 const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
+  const redirectPath = req.query.redirect as string || "/dashboard";
+
+    const sessionToken = req.cookies["better-auth.session_token"];
+
+    if(!sessionToken){
+        return res.redirect(`${envVars.FRONTEND_URL}/login?error=oauth_failed`);
+    }
+
+    const session = await auth.api.getSession({
+        headers:{
+            "Cookie" : `better-auth.session_token=${sessionToken}`
+        }
+    })
+
+    if (!session) {
+        return res.redirect(`${envVars.FRONTEND_URL}/login?error=no_session_found`);
+    }
 
 
+    if(session && !session.user){
+        return res.redirect(`${envVars.FRONTEND_URL}/login?error=no_user_found`);
+    }
 
-  sendResponse(res, {
-    success: true,
-    httpStatusCode: status.OK,
-    message: "Email verified successfully",
-    
-  });
+    const result = await authService.googleLoginSuccess(session);
+
+    const {accessToken, refreshToken} = result;
+
+    tokenUtils.setAccessTokenCookie(res, accessToken);
+    tokenUtils.setRefreshTokenCookie(res, refreshToken);
+ // ?redirect=//profile -> /profile
+    const isValidRedirectPath = redirectPath.startsWith("/") && !redirectPath.startsWith("//");
+    const finalRedirectPath = isValidRedirectPath ? redirectPath : "/dashboard";
+
+    res.redirect(`${envVars.FRONTEND_URL}${finalRedirectPath}`);
 });
 
 const handleOAuthError = catchAsync(async (req: Request, res: Response) => {
-  
-
-  sendResponse(res, {
-    success: true,
-    httpStatusCode: status.OK,
-    message: "Email verified successfully",
-    
-  });
+    const error = req.query.error as string || "oauth_failed";
+    res.redirect(`${envVars.FRONTEND_URL}/login?error=${error}`);
 });
 
 export const authController = {
@@ -176,5 +191,5 @@ export const authController = {
   emailVerify,
   googleLogin,
   googleLoginSuccess,
-  handleOAuthError
+  handleOAuthError,
 };
