@@ -6,8 +6,12 @@ import errorHandler from "./middleware/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
+import path from "path"
 
 const app: Application = express();
+
+app.set("view engine", "ejs");
+app.set("views", path.resolve(process.cwd(),`src/templates`));
 
 app.use("/api/auth",toNodeHandler(auth))
 
