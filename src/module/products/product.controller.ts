@@ -5,7 +5,10 @@ import { sendResponse } from "../../shared/sentResponse";
 import status from "http-status";
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await productService.createProduct(req.body);
+  const result = await productService.createProduct({
+    ...req.body,
+    imageUrl:req.file?.path
+  });
   sendResponse(res, {
     success: true,
     httpStatusCode: status.CREATED,
@@ -40,7 +43,11 @@ const getProductById = catchAsync(async (req: Request, res: Response) => {
 
 const updateProduct = catchAsync(async (req: Request, res: Response) => {
     const {id}=req.params
-  const result = await productService.updateProduct(id as string,req.body);
+    const payload={
+    ...req.body,
+    imageUrl:req.file?.path
+    }
+  const result = await productService.updateProduct(id as string,payload);
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,

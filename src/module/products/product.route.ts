@@ -7,11 +7,13 @@ import {
 } from "./product.Validation";
 import { checkAuth } from "../../middleware/checkAuth";
 import { Role } from "../../../generated/prisma/enums";
+import { multerUpload } from "../../config/multer.config";
 const router = express.Router();
 
 router.post(
   "/",
   checkAuth(Role.ADMIN),
+  multerUpload.single("imageUrl"),
   validateRequest(createProductZodSchema),
   productController.createProduct,
 );
@@ -19,6 +21,7 @@ router.get("/", productController.getAllProduct);
 router.get("/:id", productController.getProductById);
 router.patch(
   "/:id",
+  multerUpload.single("imageUrl"),
   checkAuth(Role.ADMIN),
   validateRequest(updateProductZodSchema),
   productController.updateProduct,

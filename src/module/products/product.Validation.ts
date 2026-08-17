@@ -25,9 +25,7 @@ export const createProductZodSchema = z.object({
     .string("Category ID is required")
     .uuid("Category ID must be a valid UUID"),
 
-  imageUrl: z
-    .string("Image URL is required")
-    .url("Image URL must be a valid URL"),
+ 
 
   isActive: z
     .boolean()
@@ -60,9 +58,7 @@ export const updateProductZodSchema=z.object({
     .string("Category ID is required")
     .uuid("Category ID must be a valid UUID"),
 
-  imageUrl: z
-    .string("Image URL is required")
-    .url("Image URL must be a valid URL"),
+
 
   isActive: z
     .boolean()
