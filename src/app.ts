@@ -16,6 +16,14 @@ const app: Application = express();
 app.set("view engine", "ejs");
 app.set("views", path.resolve(process.cwd(),`src/templates`));
 
+app.post("/webhook", express.raw({type:"application/json"}), async (req:Request,res:Response)=>{
+  console.log("Webhook received:",req.body);
+  res.status(200).json({received:true})
+  
+  // const sig = req.headers['stripe-signature'] as string;
+  // const stripe = require("stripe")(envVars.STRIPE_SECRET_KEY);
+  // let event;  
+})
 app.use(cors({
   origin:[envVars.FRONTEND_URL,envVars.BETTER_AUTH_URL],
   credentials:true,
