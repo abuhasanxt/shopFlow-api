@@ -2,13 +2,14 @@
 import express, { Application, Request, Response } from "express"
 import { IndexRoute } from "./routes";
 import { notFound } from "./middleware/notFound";
-import errorHandler from "./middleware/globalErrorHandler";
+
 import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import path from "path"
 import cors from "cors"
 import { envVars } from "./config/env";
+import { errorHandler } from "./middleware/globalErrorHandler";
 
 const app: Application = express();
 
