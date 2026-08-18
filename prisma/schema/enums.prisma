@@ -9,3 +9,11 @@ enum OrderStatus {
     FAILED
     CANCELLED
 }
+
+
+
+enum PaymentStatus {
+    UNPAID
+    PAID
+    FAILED
+}

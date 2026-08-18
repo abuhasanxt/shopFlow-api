@@ -1,0 +1,19 @@
+model Payment {
+    id                 String        @id @default(uuid())
+    orderId            String        @unique
+    paymentIntentId    String        @unique
+    paymentGatewayData Json?
+    amount             Int
+    currency           String
+    status             PaymentStatus @default(UNPAID)
+    stripeEventId      String?       @unique
+    transactionId      String        @unique @db.Uuid
+    order              Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([status])
+    @@index([transactionId])
+    @@map("payments")
+}
