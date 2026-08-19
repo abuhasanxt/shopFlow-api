@@ -469,7 +469,13 @@ const cancelUnpaidOrders = async () => {
       }
     },
     select:{
-      id:true
+      id:true,
+      items: {
+        select: {
+          productId: true,
+          quantity: true,
+        },
+      },
     }
   });
 
@@ -480,6 +486,26 @@ const cancelUnpaidOrders = async () => {
   const orderIds=unpaidOrders.map(order=>order.id)
 
   await prisma.$transaction(async(tx)=>{
+
+
+ // 1. Restore product stock
+    for (const order of unpaidOrders) {
+      for (const item of order.items) {
+        await tx.product.update({
+          where: {
+            id: item.productId,
+          },
+
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+    }
+
+
     await tx.order.updateMany({
       where:{
         id:{
