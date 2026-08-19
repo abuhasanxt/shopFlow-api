@@ -62,6 +62,13 @@ const handlerStripeWebhookEvent = async (event: Stripe.Event) => {
           ? OrderStatus.PAID
           : OrderStatus.PENDING;
 
+
+         const paymentIntentId =
+        typeof session.payment_intent ===
+        "string"
+          ? session.payment_intent
+          : null;
+
       await prisma.$transaction(async (tx) => {
         await tx.payment.update({
           where: {
@@ -69,6 +76,7 @@ const handlerStripeWebhookEvent = async (event: Stripe.Event) => {
           },
           data: {
             status: paymentStatus,
+            paymentIntentId,
             stripeEventId: event.id,
             paymentGatewayData: session as any,
           },

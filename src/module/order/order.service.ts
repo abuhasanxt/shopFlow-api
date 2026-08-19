@@ -12,7 +12,7 @@ import { envVars } from "../../config/env";
 
 // pay now order
 const createOrder = async (userId: string) => {
-  const order = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     // 1. Get user's cart with products
     const cart = await tx.cart.findUnique({
       where: {
@@ -113,15 +113,27 @@ const createOrder = async (userId: string) => {
       },
     });
 
+const transactionId = randomUUID();
+
+    const payment = await tx.payment.create({
+      data: {
+        orderId: order.id,
+        amount: order.totalAmount,
+        currency: "bdt",
+        transactionId,
+        status: PaymentStatus.UNPAID,
+      },
+    });
+
     // 9. Clear cart
     await tx.cartItem.deleteMany({
       where: {
         cartId: cart.id,
       },
     });
-    return order;
+    return {order,payment};
   });
-
+  const{order,payment}=result
   //  Stripe call OUTSIDE transaction
   let session;
   try {
@@ -142,14 +154,16 @@ const createOrder = async (userId: string) => {
       ],
       metadata: {
         orderId: order.id,
+        paymentId:payment.id
       },
-      success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
-      cancel_url: `${envVars.FRONTEND_URL}/dashboard/order`,
+      success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success?order_id=${order.id}&payment_id=${payment.id}`,
+      cancel_url: `${envVars.FRONTEND_URL}/dashboard/order?payment=cancelled`,
     });
   } catch (error) {
     console.error(error);
     // Stripe session failed
-    await prisma.order.update({
+  await prisma.$transaction(async(tx)=>{
+      await prisma.order.update({
       where: {
         id: order.id,
       },
@@ -158,6 +172,27 @@ const createOrder = async (userId: string) => {
         status: OrderStatus.CANCELLED,
       },
     });
+
+     await tx.payment.delete({
+        where: {
+          id: payment.id,
+        },
+      });
+
+        for (const item of order.items) {
+        await tx.product.update({
+          where: {
+            id: item.productId,
+          },
+
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+  });
 
     throw new AppError(
       status.INTERNAL_SERVER_ERROR,
@@ -165,43 +200,19 @@ const createOrder = async (userId: string) => {
     );
   }
 
+ const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : null;
 
-  //create payment
-  const transactionId = randomUUID();
-  let paymentData;
-  try {
-    paymentData = await prisma.payment.create({
-      data: {
-        orderId: order.id,
-        amount: order.totalAmount,
-        transactionId,
-       
-        paymentIntentId: typeof session.payment_intent === "string"
-          ? session.payment_intent
-          : null,
-        currency: "bdt",
-        status: PaymentStatus.UNPAID,
-      },
-    });
-  } catch (error) {
-    // Payment creation failed
-    console.error(error);
-    await prisma.order.update({
-      where: {
-        id: order.id,
-      },
-
-      data: {
-        status: OrderStatus.CANCELLED,
-      },
-    });
-
-    throw new AppError(
-      status.INTERNAL_SERVER_ERROR,
-      "Failed to create payment record",
-    );
-  }
-
+  const  paymentData = await prisma.payment.update({
+    where:{
+      id:payment.id
+    },
+    data:{
+      paymentIntentId
+    }
+})
   // 10. Return order
   return {
     order,
@@ -428,7 +439,7 @@ const initiatePayment = async (userId: string, orderId: string) => {
     },
 
     data: {
-      stripeSessionId: session.id,
+     
 
       paymentIntentId:
         typeof session.payment_intent === "string"
