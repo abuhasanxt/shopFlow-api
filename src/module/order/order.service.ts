@@ -437,7 +437,7 @@ const initiatePayment = async (userId: string, orderId: string) => {
     cancel_url: `${envVars.FRONTEND_URL}/dashboard/order`,
   });
 
-   await prisma.payment.update({
+  await prisma.payment.update({
     where: {
       id: orderData.payment.id,
     },
@@ -445,7 +445,10 @@ const initiatePayment = async (userId: string, orderId: string) => {
     data: {
       stripeSessionId: session.id,
 
-      paymentIntentId: typeof session.payment_intent === 'string' ? session.payment_intent : undefined
+      paymentIntentId:
+        typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : undefined,
     },
   });
   return {
@@ -453,10 +456,59 @@ const initiatePayment = async (userId: string, orderId: string) => {
   };
 };
 
+const cancelUnpaidOrders = async () => {
+  const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+  const unpaidOrders = await prisma.order.findMany({
+    where: {
+      createdAt: {
+        lte: thirtyMinutesAgo,
+      },
+      status:OrderStatus.PENDING,
+      payment:{
+        status:PaymentStatus.UNPAID
+      }
+    },
+    select:{
+      id:true
+    }
+  });
+
+  if (unpaidOrders.length === 0) {
+    return;
+  }
+
+  const orderIds=unpaidOrders.map(order=>order.id)
+
+  await prisma.$transaction(async(tx)=>{
+    await tx.order.updateMany({
+      where:{
+        id:{
+          in:orderIds
+        }
+      },
+      data:{
+        status:OrderStatus.CANCELLED
+      }
+    });
+
+await tx.payment.deleteMany({
+  where:{
+    orderId:{
+      in:orderIds
+    }
+  }
+});
+
+
+
+  })
+ 
+};
 export const orderService = {
   createOrder,
   getAllOrder,
   getOrderById,
   orderWithPayLater,
   initiatePayment,
+  cancelUnpaidOrders
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express, { Application, Request, Response } from "express"
 import { IndexRoute } from "./routes";
@@ -11,6 +12,8 @@ import cors from "cors"
 import { envVars } from "./config/env";
 import { errorHandler } from "./middleware/globalErrorHandler";
 import { paymentController } from "./module/payment/payment.controller";
+import cron from "node-cron"
+import { orderService } from "./module/order/order.service";
 
 const app: Application = express();
 
@@ -37,6 +40,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
+cron.schedule("*/25 * * * *",async()=>{
+  try {
+    console.log("Running cron to cancel unpaid orders....");
+    await orderService.cancelUnpaidOrders()
+  } catch (error:any) {
+    console.error("Error occurred while canceling unpaid orders: ",error.message)
+  }
+
+
+})
 
 app.use("/",IndexRoute)
 
