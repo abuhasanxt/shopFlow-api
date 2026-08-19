@@ -165,23 +165,6 @@ const createOrder = async (userId: string) => {
     );
   }
 
-  // Stripe PaymentIntent check
-  if (typeof session.payment_intent !== "string") {
-    await prisma.order.update({
-      where: {
-        id: order.id,
-      },
-
-      data: {
-        status: OrderStatus.CANCELLED,
-      },
-    });
-
-    throw new AppError(
-      status.INTERNAL_SERVER_ERROR,
-      "Stripe PaymentIntent was not created",
-    );
-  }
 
   //create payment
   const transactionId = randomUUID();
@@ -192,8 +175,10 @@ const createOrder = async (userId: string) => {
         orderId: order.id,
         amount: order.totalAmount,
         transactionId,
-        stripeSessionId: session.id,
-        paymentIntentId: session.payment_intent,
+       
+        paymentIntentId: typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : null,
         currency: "bdt",
         status: PaymentStatus.UNPAID,
       },
