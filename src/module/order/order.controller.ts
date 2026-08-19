@@ -60,8 +60,50 @@ const getOrderById = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+const orderWithPayLater=catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    throw new AppError(status.UNAUTHORIZED, "You are Unauthorized");
+  }
+  const result = await orderService.orderWithPayLater(
+    userId, 
+  );
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.CREATED,
+    message: "Order create successfully with Pay Later option",
+    data: result,
+  });
+});
+
+
+
+const initiatePayment=catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const orderId=req.params.id
+
+  if (!userId) {
+    throw new AppError(status.UNAUTHORIZED, "You are Unauthorized");
+  }
+  const result = await orderService.initiatePayment(
+    userId, 
+    orderId as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.CREATED,
+    message: "Payment Initiated Successfully",
+    data: result,
+  });
+});
 export const orderController = {
   createOrder,
   getAllOrder,
-  getOrderById
+  getOrderById,
+  orderWithPayLater,
+  initiatePayment
 };
