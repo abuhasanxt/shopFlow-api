@@ -3,7 +3,7 @@ import { checkAuth } from "../../middleware/checkAuth";
 import { Role } from "../../../generated/prisma/enums";
 import { validateRequest } from "../../middleware/validateRequest";
 
-import { createCartZodSchema } from "./cart.validation";
+import { createCartZodSchema, updateCartZodSchema } from "./cart.validation";
 import { cartController } from "./cart.controller";
 
 const router = express.Router();
@@ -19,6 +19,7 @@ router.get("/", checkAuth(Role.CUSTOMER), cartController.getCart);
 router.patch(
   "/items/:productId",
   checkAuth(Role.CUSTOMER),
+  validateRequest(updateCartZodSchema),
   cartController.updateCartItem,
 );
 
