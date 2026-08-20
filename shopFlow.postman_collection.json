@@ -23,7 +23,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n \"name\":\"Laptop \"\r\n}",
+              "raw": "{\r\n \"name\":\"Phone\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -90,7 +90,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:5000/categories/1996f26d-728f-4aef-8905-02423cd26910",
+              "raw": "http://localhost:5000/categories/48fb2412-9ae5-4cc7-ad80-7b389ae4756f",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -98,7 +98,7 @@
               "port": "5000",
               "path": [
                 "categories",
-                "1996f26d-728f-4aef-8905-02423cd26910"
+                "48fb2412-9ae5-4cc7-ad80-7b389ae4756f"
               ]
             }
           },
@@ -148,7 +148,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\":\"abu\",\r\n    \"email\":\"abuhasan@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}",
+              "raw": "{\r\n    \"name\":\"abu hasan\",\r\n    \"email\":\"abuhasanxyz8@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -183,7 +183,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"abuhasan@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}",
+              "raw": "{\r\n    \"email\":\"abuhasanxyz8@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -270,7 +270,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"abuhasanxt@gmail.com\",\r\n    \"otp\":\"671134\"\r\n}",
+              "raw": "{\r\n    \"email\":\"abuhasanxyz8@gmail.com\",\r\n    \"otp\":\"547758\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -360,13 +360,21 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\":\"Rakib\",\r\n    \"image\":\"ajf;\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\"name\":\"Abu Hasan\"}",
+                  "type": "text",
+                  "uuid": "d58930a6-ffb3-4cdd-bd4c-52f24930e741"
+                },
+                {
+                  "key": "imageUrl",
+                  "type": "file",
+                  "uuid": "464ab49e-df72-4b41-a764-31234441e285",
+                  "src": "/D:/personal/abu/Untitled-1.jpg"
                 }
-              }
+              ]
             },
             "url": {
               "raw": "http://localhost:5000/customers/me",
@@ -456,7 +464,7 @@
               "formdata": [
                 {
                   "key": "data",
-                  "value": "{\n  \"name\": \"Walton\",\n  \"description\": \" Laptop model y50\",\n  \"price\": 60670,\n  \"stock\": 6,\n  \"categoryId\": \"8b9a9fec-a03f-431e-9829-1f7da330ef44\"\n}",
+                  "value": "{\n  \"name\": \"vivoa\",\n  \"description\": \" model y50\",\n  \"price\": 20500,\n  \"stock\": 6,\n  \"categoryId\": \"6e7b1600-ccce-492b-9793-c1036e5e67c5\"\n}",
                   "type": "text",
                   "uuid": "5e3cf102-3a6a-4465-b316-3f0c3039ed41"
                 },
@@ -464,7 +472,7 @@
                   "key": "imageUrl",
                   "type": "file",
                   "uuid": "59f7629c-01bb-4eb8-9622-f4eab767f0b2",
-                  "src": "/C:/Users/Abu Hasan/OneDrive/Pictures/PASSION-BP5800-laptop.png"
+                  "src": "/C:/Users/Abu Hasan/OneDrive/Pictures/Y20A BLUE 3 64GB 2_86_11zon.jpg"
                 }
               ]
             },
@@ -494,7 +502,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:5000/products?page=2",
+              "raw": "http://localhost:5000/products?page=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -534,7 +542,7 @@
                 },
                 {
                   "key": "page",
-                  "value": "2"
+                  "value": "1"
                 }
               ]
             }
@@ -567,16 +575,24 @@
             "method": "PATCH",
             "header": [],
             "body": {
-              "mode": "raw",
-              "raw": "{\r\n\r\n     \"id\": \"808cb2fb-bb24-42c6-b8f0-f288ee88dcad\",\r\n                \"name\": \"HDMI cable\",\r\n                \"description\": \" werless cable model y50\",\r\n                \"price\": 220,\r\n                \"stock\": 10\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n\n     \"id\": \"808cb2fb-bb24-42c6-b8f0-f288ee88dcad\",\n                \"name\": \"HDMI cable\",\n                \"description\": \" werless cable model y50\",\n                \"price\": 220,\n                \"stock\": 12\n}",
+                  "type": "text",
+                  "uuid": "70485803-eb1e-4b57-aed4-1b7dd25d1866"
+                },
+                {
+                  "key": "imageUrl",
+                  "type": "file",
+                  "uuid": "511a0488-d21b-464b-a12e-630b3888c7d1",
+                  "src": "/C:/Users/Abu Hasan/OneDrive/Pictures/450447893_122106447176396850_8160771962694681283_n.jpg"
                 }
-              }
+              ]
             },
             "url": {
-              "raw": "http://localhost:5000/products/48d07537-d90e-4dfd-ac66-5df776beb962",
+              "raw": "http://localhost:5000/products/34b00efa-4677-4e30-a3cd-51f0ccb7cec0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -584,7 +600,7 @@
               "port": "5000",
               "path": [
                 "products",
-                "48d07537-d90e-4dfd-ac66-5df776beb962"
+                "34b00efa-4677-4e30-a3cd-51f0ccb7cec0"
               ]
             }
           },
@@ -628,7 +644,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"e48c70b7-a9cc-44a6-8d00-938e0283fb5e\",\r\n            \"quantity\": 2\r\n        }\r\n    ]\r\n}",
+              "raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"34b00efa-4677-4e30-a3cd-51f0ccb7cec0\",\r\n            \"quantity\": 2\r\n        }\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -688,7 +704,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"quantity\":1\r\n}",
+              "raw": "{\r\n    \"quantity\":4\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -696,7 +712,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:5000/cart/items/f222632b-3c43-42ee-b2bb-5b6936dbfd4b",
+              "raw": "http://localhost:5000/cart/items/34b00efa-4677-4e30-a3cd-51f0ccb7cec0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -705,7 +721,7 @@
               "path": [
                 "cart",
                 "items",
-                "f222632b-3c43-42ee-b2bb-5b6936dbfd4b"
+                "34b00efa-4677-4e30-a3cd-51f0ccb7cec0"
               ]
             }
           },
@@ -723,7 +739,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:5000/cart/items/479b690f-340f-4cda-9d80-60bc64805ffa",
+              "raw": "http://localhost:5000/cart/items/34b00efa-4677-4e30-a3cd-51f0ccb7cec0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -732,7 +748,7 @@
               "path": [
                 "cart",
                 "items",
-                "479b690f-340f-4cda-9d80-60bc64805ffa"
+                "34b00efa-4677-4e30-a3cd-51f0ccb7cec0"
               ]
             }
           },
@@ -820,7 +836,7 @@
               "raw": ""
             },
             "url": {
-              "raw": "http://localhost:5000/orders/5e62cd5d-701b-4ac9-8b5d-eaf53800622b",
+              "raw": "http://localhost:5000/orders/d8436f19-cf93-48a6-81c3-fbd7c20fcf41",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -828,7 +844,7 @@
               "port": "5000",
               "path": [
                 "orders",
-                "5e62cd5d-701b-4ac9-8b5d-eaf53800622b"
+                "d8436f19-cf93-48a6-81c3-fbd7c20fcf41"
               ]
             }
           },
@@ -872,7 +888,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:5000/orders/initiate-payment/8a818446-0ad7-4000-9308-e29a6b9cd01b",
+              "raw": "http://localhost:5000/orders/initiate-payment/f73eaebc-aacf-4684-944a-2ff8432c1257",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -881,36 +897,13 @@
               "path": [
                 "orders",
                 "initiate-payment",
-                "8a818446-0ad7-4000-9308-e29a6b9cd01b"
+                "f73eaebc-aacf-4684-944a-2ff8432c1257"
               ]
             }
           },
           "response": []
         }
       ]
-    },
-    {
-      "name": "https://checkout.stripe.com/c/pay/cs_test_a1ooibV5GELDIyDDUrEpeFCeBqn5i1eo8BlXAvZMBUJYaCgji9M2rr3N41#fidnandhYHdWcXxpYCc",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://checkout.stripe.com/c/pay/cs_test_a1ooibV5GELDIyDDUrEpeFCeBqn5i1eo8BlXAvZMBUJYaCgji9M2rr3N41#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRXdDN9M0R0RE1KaUlJMX83dm82Vl9rZGJifV9kb2JrNm5obEddaVF1ZGBhclZrXUlHSTVPaUI8bnczVU5hbTJMckJucm9cY0Y8SHBkf0x2f3dEanZma2w1NVM3Z2Z1SnRPJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
-          "protocol": "https",
-          "host": [
-            "checkout",
-            "stripe",
-            "com"
-          ],
-          "path": [
-            "c",
-            "pay",
-            "cs_test_a1ooibV5GELDIyDDUrEpeFCeBqn5i1eo8BlXAvZMBUJYaCgji9M2rr3N41"
-          ],
-          "hash": "fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRXdDN9M0R0RE1KaUlJMX83dm82Vl9rZGJifV9kb2JrNm5obEddaVF1ZGBhclZrXUlHSTVPaUI8bnczVU5hbTJMckJucm9cY0Y8SHBkf0x2f3dEanZma2w1NVM3Z2Z1SnRPJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
-        }
-      },
-      "response": []
     }
   ]
 }
