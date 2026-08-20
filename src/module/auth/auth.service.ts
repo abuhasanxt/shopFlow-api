@@ -7,12 +7,9 @@ import { jwtUtils } from "../../utils/jwt";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import { prisma } from "../../lib/prisma";
+import { UserData, UserLogin } from "./auth.interface";
 
-interface UserData {
-  name: string;
-  email: string;
-  password: string;
-}
+
 
 const registerCustomer = async (payload: UserData) => {
   const { name, email, password } = payload;
@@ -60,10 +57,7 @@ const registerCustomer = async (payload: UserData) => {
   };
 };
 
-interface UserLogin {
-  email: string;
-  password: string;
-}
+
 
 const loginUser = async (payload: UserLogin) => {
   const { email, password } = payload;

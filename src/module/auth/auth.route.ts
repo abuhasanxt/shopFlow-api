@@ -2,11 +2,13 @@ import express from "express";
 import { authController } from "./auth.controller";
 import { checkAuth } from "../../middleware/checkAuth";
 import { Role } from "../../../generated/prisma/enums";
+import { validateRequest } from "../../middleware/validateRequest";
+import { emailVerifyZodSchema, userLoginZodSchema, userRegisterZodSchema } from "./auth.validation";
 
 const router = express.Router();
 
-router.post("/register", authController.registerCustomer);
-router.post("/login", authController.loginUser);
+router.post("/register",validateRequest(userRegisterZodSchema), authController.registerCustomer);
+router.post("/login",validateRequest(userLoginZodSchema) ,authController.loginUser);
 
 router.post("/refresh", authController.getNewToken);
 router.post(
@@ -15,7 +17,7 @@ router.post(
   authController.logoutUser,
 );
 
-router.post("/verify-email",authController.emailVerify)
+router.post("/verify-email",validateRequest(emailVerifyZodSchema),authController.emailVerify)
 
 
 
