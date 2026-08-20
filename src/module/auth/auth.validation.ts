@@ -4,7 +4,7 @@ import z from "zod";
 export const userRegisterZodSchema=z.object({
       name: z
         .string("Name is required and must be string")
-        .min(5, "Name must be at least 2 characters")
+        .min(2, "Name must be at least 2 characters")
         .max(30, "Name must be at most 30 characters"),
         email:z.email(),
         password:z.string("Password is required and must be string").min(8,"Password must be at least 8 characters")
