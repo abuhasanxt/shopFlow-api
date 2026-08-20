@@ -21,8 +21,8 @@ router.get("/", productController.getAllProduct);
 router.get("/:id", productController.getProductById);
 router.patch(
   "/:id",
-  multerUpload.single("imageUrl"),
   checkAuth(Role.ADMIN),
+  multerUpload.single("imageUrl"),
   validateRequest(updateProductZodSchema),
   productController.updateProduct,
 );

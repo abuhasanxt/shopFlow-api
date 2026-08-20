@@ -33,10 +33,10 @@ const getById =async(id:string)=>{
 }
 
 interface UserData{
-    name:string,
-    image:string
+    name?:string,
+
 }
-const updateMe=async(userId:string,payload:UserData)=>{
+const updateMe=async(userId:string,payload:UserData,file?:Express.Multer.File)=>{
 const existingUser=await prisma.user.findFirst({
     where:{id:userId}
 })
@@ -44,16 +44,28 @@ if (!existingUser) {
     throw new AppError(status.NOT_FOUND,"User not found")
 }
 
+ const updateData: {
+    name?: string;
+    image?: string;
+  } = {};
 
+  if (payload.name !== undefined) {
+    updateData.name = payload.name;
+  }
+
+  // Cloudinary image
+  if (file) {
+    updateData.image = file.path;
+  }
 
   if (Object.keys(payload).length === 0) {
     throw new AppError(status.BAD_REQUEST,"Please provide at least one field to update");
   }
 
   const isSame =
-    (payload.name === undefined || payload.name === existingUser.name) &&
-    (payload.image === undefined ||
-      payload.image === existingUser.image);
+    (updateData.name === undefined || updateData.name === existingUser.name) &&
+    (updateData.image === undefined ||
+      updateData.image === existingUser.image);
 
   if (isSame) {
     throw new AppError(status.CONFLICT,"Your provided data is already up to date");
@@ -63,7 +75,7 @@ if (!existingUser) {
         where:{
            id:userId
         },
-        data: payload
+        data: updateData
     })
     return result
 }

@@ -42,8 +42,9 @@ const getById = catchAsync(async (req: Request, res: Response) => {
 
 const updateMe = catchAsync(async (req: Request, res: Response) => {
   const userId= req.user?.userId
+  const file=req.file
 
-  const result = await customerService.updateMe(userId as string,req.body);
+  const result = await customerService.updateMe(userId as string,req.body,file);
   sendResponse(res, {
     success: true,
     httpStatusCode: status.OK,
